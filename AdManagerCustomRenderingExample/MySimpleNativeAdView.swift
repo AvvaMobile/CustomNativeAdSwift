@@ -18,65 +18,33 @@ import GoogleMobileAds
 import UIKit
 
 
-/// Custom native ad view class with format ID 10063170.
 class MySimpleNativeAdView: UIView {
 
-  /// Weak references to this ad's asset views.
-  @IBOutlet weak var headlineView: UILabel!
   @IBOutlet weak var mainPlaceholder: UIView!
-  @IBOutlet weak var captionView: UILabel!
-  @IBOutlet weak var adChoicesView: UIImageView!
+    @IBOutlet weak var labelText: UILabel!
 
-  /// The custom native ad that populated this view.
+
   var customNativeAd: GADCustomNativeAd!
 
-  override func awakeFromNib() {
-    super.awakeFromNib()
 
-    // Enable clicks on the main image.
-   
-    mainPlaceholder.isUserInteractionEnabled = true
-  }
-
-  /// Populates the ad view with the custom native ad object.
   func populate(withCustomNativeAd customNativeAd: GADCustomNativeAd) {
     self.customNativeAd = customNativeAd
-
-    // Render the AdChoices image.
-    let adChoicesKey = GADNativeAssetIdentifier.adChoicesViewAsset.rawValue
-    let adChoicesImage = customNativeAd.image(forKey: adChoicesKey)?.image
-    adChoicesView.image = adChoicesImage
-    adChoicesView.isHidden = adChoicesImage == nil
-
-    let mainView: UIView = self.mainView(forCustomNativeAd: customNativeAd)
-    updateMainView(mainView)
-  }
-
-  /// This custom native ad also has a both a video and image associated with it. We'll use the
-  /// video asset if available, and otherwise fallback to the image asset.
-  private func mainView(forCustomNativeAd customNativeAd: GADCustomNativeAd) -> UIView {
-      let imageKey = "Image"
-      let image: UIImage? = customNativeAd.image(forKey: imageKey)?.image
-      return UIImageView(image: image)
     
-  }
+      for subview: UIView in mainPlaceholder.subviews {
+        subview.removeFromSuperview()
+      }
+      
+      let image: UIImage? = customNativeAd.image(forKey: "Image")?.image
+      mainPlaceholder.addSubview(UIImageView(image: image))
+      
+      let text: UILabel? = UILabel(frame: CGRect(x: 0, y: 100, width: 400, height: 100))
+      text?.text = customNativeAd.string(forKey: "DestinationURL")
+      text?.text?.append(" ---> DestinationURL")
+      mainPlaceholder.addSubview(text!)
 
-  private func updateMainView(_ mainView: UIView) {
-    // Remove all the media placeholder's subviews.
-    for subview: UIView in mainPlaceholder.subviews {
-      subview.removeFromSuperview()
-    }
-    mainPlaceholder.addSubview(mainView)
-    // Size the media view to fill our container size.
-    mainView.translatesAutoresizingMaskIntoConstraints = false
-    let viewDictionary: [AnyHashable: Any] = ["mainView": mainView]
-    mainPlaceholder.addConstraints(
-      NSLayoutConstraint.constraints(
-        withVisualFormat: "H:|[mainView]|", options: [], metrics: nil,
-        views: viewDictionary as? [String: Any] ?? [String: Any]()))
-    mainPlaceholder.addConstraints(
-      NSLayoutConstraint.constraints(
-        withVisualFormat: "V:|[mainView]|", options: [], metrics: nil,
-        views: viewDictionary as? [String: Any] ?? [String: Any]()))
+      let lineItemText: UILabel? = UILabel(frame: CGRect(x: 0, y: 150, width: 400, height: 100))
+      lineItemText?.text = customNativeAd.string(forKey: "LineItemID")
+      lineItemText?.text?.append(" ---> LineItemID")
+      mainPlaceholder.addSubview(lineItemText!)
   }
 }
