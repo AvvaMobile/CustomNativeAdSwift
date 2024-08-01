@@ -49,7 +49,6 @@ class ViewController: UIViewController {
       guard !self.isMobileAdsStartCalled else { return }
 
       self.isMobileAdsStartCalled = true
-
       // Initialize the Google Mobile Ads SDK.
       GADMobileAds.sharedInstance().start()
       // Request an ad.
@@ -61,21 +60,6 @@ class ViewController: UIViewController {
     nativeAdView?.removeFromSuperview()
     nativeAdView = view
     nativeAdPlaceholder.addSubview(nativeAdView)
-    nativeAdView.translatesAutoresizingMaskIntoConstraints = false
-
-    // Layout constraints for positioning the native ad view to stretch the entire width and height
-    // of the nativeAdPlaceholder.
-    let viewDictionary = ["_nativeAdView": nativeAdView!]
-    self.view.addConstraints(
-      NSLayoutConstraint.constraints(
-        withVisualFormat: "H:|[_nativeAdView]|",
-        options: NSLayoutConstraint.FormatOptions(rawValue: 0), metrics: nil, views: viewDictionary)
-    )
-    self.view.addConstraints(
-      NSLayoutConstraint.constraints(
-        withVisualFormat: "V:|[_nativeAdView]|",
-        options: NSLayoutConstraint.FormatOptions(rawValue: 0), metrics: nil, views: viewDictionary)
-    )
   }
 
   // MARK: - Actions
@@ -124,13 +108,7 @@ extension ViewController: GADCustomNativeAdLoaderDelegate {
       Bundle.main.loadNibNamed(
         "SimpleCustomNativeAdView", owner: nil, options: nil)!.first as! MySimpleNativeAdView
     setAdView(customNativeAdView)
-      
-
- 
-    // Populate the custom native ad view with the custom native ad assets.
     customNativeAdView.populate(withCustomNativeAd: customNativeAd)
-    // Impressions for custom native ads must be manually tracked. If this is not called,
-    // videos will also not be played.
     customNativeAd.recordImpression()
   }
 }
